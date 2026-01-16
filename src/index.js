@@ -48,11 +48,21 @@ ENConversion.prototype.checkForConversion = function () {
 };
 
 ENConversion.prototype.convert = function () {
-  sessionStorage.setItem(
-    "ENConversion_Converted_" + this.currentPage.pageJson.campaignId,
-    "true"
-  );
-  this.dispatchEvents();
+
+    // case for redirection
+    const isRedirect =  this.previousPage.hasRedirect() && window.ENConversion_Convert;
+    const cPage =  this.currentPage;
+    
+    // temp set current page as previous for dispatching events
+    if (isRedirect) this.currentPage = this.previousPage;
+  
+    sessionStorage.setItem(
+    "ENConversion_Converted_" + this.currentPage.pageJson.campaignId,"true");
+    
+    this.dispatchEvents();
+    
+    // reset current page
+    if (isRedirect) this.currentPage = cPage;
 };
 
 ENConversion.prototype.dispatchEvents = function () {
